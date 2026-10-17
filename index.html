@@ -3,209 +3,244 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Orbittroniz - Live Sports Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800;900&display=swap" rel="stylesheet">
+<title>Orbittroniz - Live Sports</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
-body{background:#020617;color:#e2e8f0;overflow-x:hidden}
-#canvas{position:fixed;inset:0;z-index:-2}
-#bg{position:fixed;inset:0;z-index:-3;background:radial-gradient(600px 400px at 20% 20%, rgba(56,189,248,0.2), transparent), radial-gradient(600px 400px at 80% 30%, rgba(251,146,60,0.2), transparent), #020617}
-.header{position:sticky;top:0;z-index:100;margin:10px;height:60px;background:linear-gradient(90deg,rgba(56,189,248,0.12),rgba(251,146,60,0.12));backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 14px}
-.logo{font-weight:900;display:flex;gap:10px;align-items:center;font-size:16px}
-.logo b{width:34px;height:34px;background:linear-gradient(90deg,#38bdf8,#fb923c);border-radius:10px;display:grid;place-items:center}
-.nav{display:flex;gap:6px;align-items:center}
-.navTab{padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#94a3b8;font-size:11px;font-weight:800;cursor:pointer;transition:0.2s}
-.navTab.active{background:#fff;color:#0f172a;box-shadow:0 0 20px rgba(255,255,255,0.2)}
-.iconBtn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);display:grid;place-items:center;cursor:pointer;position:relative;font-size:14px}
-.iconBtn .dot{position:absolute;top:-2px;right:-2px;width:10px;height:10px;background:#ef4444;border-radius:50%;box-shadow:0 0 8px #ef4444}
-.notifPanel{position:absolute;top:46px;right:0;width:300px;background:rgba(15,23,42,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:12px;display:none;z-index:200;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
-.notifPanel.show{display:block}
-.notif{padding:10px;border-radius:10px;background:rgba(255,255,255,0.05);margin-bottom:8px;font-size:11px;border-left:2px solid #38bdf8}
-.main{max-width:1320px;margin:0 auto;padding:0 10px 90px;display:grid;grid-template-columns:1fr 340px;gap:14px}
-@media(max-width:1000px){.main{grid-template-columns:1fr}}
-.bento{display:grid;grid-template-columns:1.5fr 1fr;gap:12px}
+:root{--bg:#fafafb;--card:#ffffff;--border:#eaea;--text:#111827;--muted:#6b7280;--accent:#111827;--blue:#3b82f6;--orange:#f97316}
+@media(prefers-color-scheme:dark){:root{--bg:#0a0a0b;--card:#111113;--border:#232326;--text:#fafafa;--muted:#a1a1aa;--accent:#fafafa}}
+body{background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+.header{height:56px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50;backdrop-filter:saturate(180%) blur(20px)}
+.logo{font-weight:800;font-size:15px;letter-spacing:-0.3px;display:flex;align-items:center;gap:10px}
+.logo span{width:28px;height:28px;background:var(--text);color:var(--card);border-radius:8px;display:grid;place-items:center;font-size:13px}
+.nav{font-size:13px;font-weight:500;color:var(--muted);display:flex;gap:24px}
+.nav a{color:var(--muted);text-decoration:none;transition:0.15s;cursor:pointer}
+.nav a.active{color:var(--text);font-weight:600}
+.nav a:hover{color:var(--text)}
+.actions{display:flex;align-items:center;gap:8px}
+.btn{height:32px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:13px;font-weight:500;cursor:pointer;transition:0.15s;color:var(--text)}
+.btn:hover{background:var(--bg);border-color:var(--text)}
+.btn.primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn.primary:hover{opacity:0.9}
+.icon{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--card);display:grid;place-items:center;cursor:pointer;transition:0.15s;font-size:14px;position:relative}
+.icon:hover{border-color:var(--text)}
+.icon .dot{position:absolute;top:6px;right:7px;width:6px;height:6px;background:#ef4444;border-radius:50%}
+
+.layout{max-width:1280px;margin:0 auto;padding:24px;display:grid;grid-template-columns:1fr 360px;gap:24px}
+@media(max-width:1000px){.layout{grid-template-columns:1fr;padding:16px}.nav{display:none}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:0.15s}
+.card:hover{border-color:rgba(0,0,0,0.1)}
+@media(prefers-color-scheme:dark){.card:hover{border-color:rgba(255,255,255,0.15)}}
+.cardHeader{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.cardHeader h3{font-size:12px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase;color:var(--muted)}
+.cardBody{padding:18px}
+.liveBadge{font-size:11px;font-weight:600;padding:4px 8px;border-radius:6px;background:#fef2f2;color:#dc2626;display:flex;align-items:center;gap:5px}
+.liveBadge i{width:5px;height:5px;background:#dc2626;border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.liveBadge.football{background:#fff7ed;color:#ea580c}
+.liveBadge.football i{background:#ea580c}
+
+.score{font-size:32px;font-weight:800;letter-spacing:-1.2px;line-height:1}
+.meta{font-size:13px;color:var(--muted);margin-top:6px}
+.meta b{color:var(--text);font-weight:600}
+.balls{display:flex;gap:6px;margin-top:14px}
+.ball{width:28px;height:28px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;font-size:11px;font-weight:600;transition:0.15s}
+.ball.active{background:var(--text);color:var(--card);border-color:var(--text)}
+.ball.w{background:#ef4444;color:#fff;border-color:#ef4444}
+
+.stats{margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.stat{background:var(--card);padding:10px 12px;text-align:center}
+.stat b{display:block;font-size:13px;font-weight:700}
+.stat span{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:0.3px;text-transform:uppercase}
+
+.tabs{display:flex;gap:2px;background:var(--bg);padding:3px;border-radius:10px;border:1px solid var(--border);width:fit-content}
+.tab{padding:6px 14px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);transition:0.15s}
+.tab.active{background:var(--card);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,0.06);border:1px solid var(--border);font-weight:600}
+
+.newsList{display:flex;flex-direction:column}
+.newsItem{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;gap:12px;cursor:pointer;transition:0.15s}
+.newsItem:last-child{border-bottom:none}
+.newsItem:hover{background:var(--bg)}
+.newsItem img{width:40px;height:40px;border-radius:8px;background:var(--bg);border:1px solid var(--border);object-fit:cover;flex-shrink:0}
+.newsItem b{font-size:13px;font-weight:600;line-height:1.3;display:block}
+.newsItem span{font-size:12px;color:var(--muted);margin-top:2px;display:block}
+
+.poll{padding:14px 18px}
+.pollQ{font-size:13px;font-weight:600;margin-bottom:12px}
+.pollOpts{display:flex;gap:8px}
+.pollOpt{flex:1;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:13px;font-weight:500;cursor:pointer;transition:0.15s;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+.pollOpt:hover{border-color:var(--text)}
+.pollOpt.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+
+.table{width:100%;border-collapse:collapse}
+.table th{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;padding:10px 18px;text-align:left;border-bottom:1px solid var(--border)}
+.table td{font-size:13px;padding:10px 18px;border-bottom:1px solid var(--border)}
+.table tr:last-child td{border-bottom:none}
+.table tr:hover td{background:var(--bg)}
+
+.chat{display:flex;flex-direction:column;height:420px}
+.chatBody{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:80%;padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.4}
+.msg.me{align-self:flex-end;background:var(--text);color:var(--bg);border-bottom-right-radius:4px}
+.msg.other{align-self:flex-start;background:var(--bg);border:1px solid var(--border);border-bottom-left-radius:4px}
+.chatInput{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:var(--card)}
+.chatInput input{flex:1;height:36px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);outline:none;font-size:13px;transition:0.15s}
+.chatInput input:focus{border-color:var(--text);background:var(--card)}
+
+.notifPanel{position:absolute;top:44px;right:0;width:360px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.12);display:none;z-index:100;overflow:hidden}
+.notifPanel.show{display:block;animation:fadeIn 0.15s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.notifHeader{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:13px}
+.notifItem{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;cursor:pointer;transition:0.15s}
+.notifItem:hover{background:var(--bg)}
+.notifItem:last-child{border-bottom:none}
+
+.right{position:sticky;top:80px;height:fit-content;display:flex;flex-direction:column;gap:16px}
+.bento{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}
 @media(max-width:800px){.bento{grid-template-columns:1fr}}
-.card{border-radius:18px;padding:14px;backdrop-filter:blur(20px);position:relative;overflow:hidden;animation:cardFloat 4s infinite alternate}
-@keyframes cardFloat{0%{transform:translateY(0)}100%{transform:translateY(-2px)}}
-.card.cricket{background:linear-gradient(135deg,rgba(56,189,248,0.12),rgba(15,23,42,0.7));border:1px solid rgba(56,189,248,0.25);box-shadow:0 0 20px rgba(56,189,248,0.15)}
-.card.football{background:linear-gradient(135deg,rgba(251,146,60,0.12),rgba(30,15,5,0.7));border:1px solid rgba(251,146,60,0.25);box-shadow:0 0 20px rgba(251,146,60,0.15)}
-.card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:2px;background:linear-gradient(90deg,transparent,#38bdf8,transparent);animation:shine 2s infinite}
-.card.football::before{background:linear-gradient(90deg,transparent,#fb923c,transparent)}
-@keyframes shine{0%{left:-100%}100%{left:100%}}
-.score{font-size:36px;font-weight:900;animation:scorePulse 1.5s infinite alternate}
-@keyframes scorePulse{0%{text-shadow:0 0 10px currentColor}100%{text-shadow:0 0 24px currentColor}}
-.score.cricket{color:#7dd3fc}
-.score.football{color:#fdba74}
-.wave{display:flex;gap:3px;height:26px;justify-content:center;margin-top:8px}
-.wave i{width:3px;border-radius:999px;animation:wave 0.7s infinite alternate}
-.wave.cricket i{background:#38bdf8;box-shadow:0 0 8px #38bdf8}
-.wave.football i{background:#fb923c;box-shadow:0 0 8px #fb923c}
-@keyframes wave{0%{height:5px}100%{height:26px}}
-.balls{display:flex;gap:5px;justify-content:center;margin-top:8px;flex-wrap:wrap}
-.ball{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);animation:pop 0.4s}
-@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
-.ball.six.cricket{background:#38bdf8;color:#fff;box-shadow:0 0 16px #38bdf8}
-.ball.six.football{background:#fb923c;color:#fff}
-.ball.w{background:#ef4444;color:#fff}
-.btn{padding:8px 14px;border-radius:999px;font-size:11px;font-weight:800;cursor:pointer;border:1px solid;transition:0.2s}
-.btn.cricket{border-color:#38bdf8;background:rgba(56,189,248,0.12);color:#7dd3fc}
-.btn.football{border-color:#fb923c;background:rgba(251,146,60,0.12);color:#fdba74}
-.tab{padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#94a3b8}
-.tab.active.cricket{background:#e0f2fe;color:#0c4a6e}
-.tab.active.football{background:#ffedd5;color:#7c2d12}
-.right{display:flex;flex-direction:column;gap:12px;position:sticky;top:80px;height:fit-content}
-.chat{border-radius:18px;background:linear-gradient(180deg,rgba(56,189,248,0.08),rgba(251,146,60,0.08));border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(20px);display:flex;flex-direction:column;height:360px}
-.chat-b{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
-.m{padding:8px 12px;border-radius:14px;font-size:11px;max-width:85%}
-.m.me{align-self:flex-end;background:#fff;color:#0f172a}
-.m.other{align-self:flex-start;background:rgba(255,255,255,0.08)}
-.ticker{position:fixed;bottom:10px;left:10px;right:10px;height:40px;background:linear-gradient(90deg,rgba(56,189,248,0.15),rgba(251,146,60,0.15));backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);border-radius:999px;display:flex;align-items:center;overflow:hidden;z-index:50}
-.tickerTrack{display:flex;gap:30px;animation:marquee 35s linear infinite;white-space:nowrap;font-size:11px;font-weight:700}
-@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.fly{position:fixed;width:70px;height:70px;z-index:100;pointer-events:none;display:none;filter:drop-shadow(0 0 20px rgba(255,255,255,0.8))}
-.reaction{position:fixed;font-size:22px;pointer-events:none;z-index:90;animation:rise 2s ease-out forwards}
-@keyframes rise{0%{transform:translateY(0) scale(0.5);opacity:1}100%{transform:translateY(-200px) scale(1.5);opacity:0}}
-.section{display:none}
-.section.active{display:block}
 </style>
 </head>
 <body>
-<canvas id="canvas"></canvas>
-<div id="bg"></div>
-<img id="flyBall" class="fly" src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Cricket_ball.png">
-
 <div class="header">
-<div class="logo"><b>◉</b> Orbittroniz • Live Dashboard</div>
+<div class="logo"><span>◉</span> Orbittroniz</div>
 <div class="nav">
-<button class="navTab active" onclick="switchSection('live',this)">Live</button>
-<button class="navTab" onclick="switchSection('news',this)">News</button>
-<button class="navTab" onclick="switchSection('table',this)">Table</button>
-<button class="navTab" onclick="switchSection('fans',this)">Fans</button>
+<a class="active" onclick="switchTab('live',this)">Live</a>
+<a onclick="switchTab('news',this)">News</a>
+<a onclick="switchTab('predict',this)">Predict</a>
+<a onclick="switchTab('table',this)">Table</a>
+</div>
+<div class="actions">
 <div style="position:relative">
-<div class="iconBtn" onclick="toggleNotif()">🔔<span class="dot"></span></div>
+<div class="icon" onclick="toggleNotif()">🔔<span class="dot"></span></div>
 <div class="notifPanel" id="notifPanel">
-<div style="font-weight:800;font-size:12px;margin-bottom:10px;display:flex;justify-content:space-between"><span>Notifications</span><span style="font-size:10px;color:#94a3b8;cursor:pointer" onclick="toggleNotif()">Close</span></div>
-<div class="notif">🏏 6! Rohit smashes 84* - MI 187/4 (18.3)</div>
-<div class="notif" style="border-left-color:#fb923c">⚽ Goal! Rashford 78' - MUN 2-1 ARS</div>
-<div class="notif">💬 New message in live chat - 3 new members joined</div>
-<div class="notif">🏆 You earned 100 coins - Dream11 team saved!</div>
-<div class="notif">🔥 Trending: Thala meme viral 12k likes</div>
+<div class="notifHeader"><span>Notifications</span><span style="color:var(--muted);cursor:pointer;font-weight:400" onclick="toggleNotif()">Close</span></div>
+<div class="notifItem"><div>🏏</div><div><b style="font-size:13px">Rohit 84* (52) - MI 187/4</b><div style="font-size:12px;color:var(--muted);margin-top:2px">Need 38 from 9 balls • Just now</div></div></div>
+<div class="notifItem"><div>⚽</div><div><b style="font-size:13px">Goal! Rashford 78' - MUN 2-1 CHE</b><div style="font-size:12px;color:var(--muted);margin-top:2px">Old Trafford • Crowd 67.3K • 1m ago</div></div></div>
+<div class="notifItem"><div>💬</div><div><b style="font-size:13px">3 new messages in live chat</b><div style="font-size:12px;color:var(--muted);margin-top:2px">Join the conversation • 2m ago</div></div></div>
+<div class="notifItem"><div>📊</div><div><b style="font-size:13px">Points table updated - KKR qualifies</b><div style="font-size:12px;color:var(--muted);margin-top:2px">IPL 2024 • Check table tab</div></div></div>
 </div>
 </div>
-<div class="iconBtn" onclick="alert('Settings - Theme, Sound, Notifications')">⚙️</div>
-<div style="width:32px;height:32px;background:linear-gradient(135deg,#38bdf8,#fb923c);border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px">U</div>
+<button class="btn">Sign in</button>
+<button class="btn primary">Get Started</button>
 </div>
 </div>
 
-<div class="main">
+<div class="layout">
 <div>
-<!-- LIVE SECTION -->
-<div id="sec-live" class="section active">
 <div class="bento">
-<div class="card cricket">
-<div style="font-size:11px;font-weight:800;color:#7dd3fc">● LIVE NOW • CRICKET • EDEN GARDENS</div>
-<div style="font-size:15px;font-weight:800;color:#fff;margin-top:6px">IND vs AUS — T20 International</div>
-<div class="score cricket" style="margin-top:10px">187 / 4</div>
-<div style="font-size:11px;color:#94a3b8;margin-top:4px">Run Rate 10.24 • Partnership 42(24) • 6s:9 4s:12 • Need 38 from 9</div>
-<div class="balls"><div class="ball six cricket">6</div><div class="ball">4</div><div class="ball six cricket">6</div><div class="ball w">W</div><div class="ball">1</div><div class="ball six cricket">6</div></div>
-<div class="wave cricket" id="cWave"></div>
-<div style="display:flex;gap:6px;margin-top:10px"><button class="btn cricket" onclick="triggerSix()">Live Motion</button><button class="btn cricket" onclick="triggerSix()">Blast 6</button><button class="tab active cricket" onclick="react('🔥')">🔥</button><button class="tab active cricket" onclick="react('💙')">💙</button></div>
-</div>
-
-<div class="card football">
-<div style="font-size:11px;font-weight:800;color:#fdba74">● FOOTBALL • LIVE • OLD TRAFFORD</div>
-<div style="font-size:17px;font-weight:800;color:#fff;margin-top:6px">MAN UTD 2 - 1 CHE</div>
-<div style="font-size:11px;color:#fdba74;margin-top:4px">72:15 • Crowd 67.3K • Energy 92%</div>
-<div class="score football" style="margin-top:10px">2 - 1</div>
-<div style="margin-top:8px;height:6px;background:rgba(255,255,255,0.1);border-radius:999px;overflow:hidden"><div style="width:84%;height:100%;background:linear-gradient(90deg,#fb923c,#f97316);box-shadow:0 0 10px #fb923c"></div></div>
-<div class="wave football" id="fWave"></div>
-<div style="display:flex;gap:6px;margin-top:10px"><button class="btn football" onclick="triggerGoal()">Motion</button><button class="btn football" onclick="triggerGoal()">Goal Blast</button><button class="tab active football" onclick="react('⚽')">⚽</button></div>
+<div class="card">
+<div class="cardHeader"><h3>Cricket • Eden Gardens • 18.2 Overs</h3><div class="liveBadge"><i></i> LIVE</div></div>
+<div class="cardBody">
+<div style="font-size:15px;font-weight:700;letter-spacing:-0.2px">IND vs AUS — T20 International</div>
+<div style="display:flex;align-items:baseline;gap:16px;margin-top:16px"><div class="score">187 / 4</div><div class="meta">Run Rate <b>10.24</b> • Need 38 from 9</div></div>
+<div class="balls"><div class="ball active">6</div><div class="ball">4</div><div class="ball active">6</div><div class="ball w">W</div><div class="ball">1</div><div class="ball active">6</div></div>
+<div class="stats"><div class="stat"><b>84*</b><span>Rohit Runs</span></div><div class="stat"><b>9</b><span>Sixes</span></div><div class="stat"><b>67%</b><span>Win Prob</span></div></div>
 </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
-<div class="card cricket"><div style="font-size:11px;font-weight:800;color:#7dd3fc">🎯 Dream11 Builder • Live Motion</div><div id="teamGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:8px"></div><button class="btn cricket" style="width:100%;margin-top:8px" onclick="saveTeam()">Save +100 Coins + Motion</button></div>
-<div class="card football"><div style="font-size:11px;font-weight:800;color:#fdba74">🏆 Leaderboard • Motion Coins</div><div id="leader" style="margin-top:6px"></div><div style="margin-top:6px;font-size:10px;color:#94a3b8">Coins: <b id="coins" style="color:#fff">340</b> • Every click = motion + coins</div></div>
-</div>
-</div>
-
-<!-- NEWS SECTION -->
-<div id="sec-news" class="section">
-<div class="card cricket"><div style="font-weight:800">📰 Latest News • Cricket + Football</div>
-<div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
-<div style="padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;border-left:3px solid #38bdf8"><b style="font-size:12px">Rohit 84* - MI 187/4 - IPL Final Live</b><div style="font-size:10px;color:#94a3b8;margin-top:4px">2h ago • 12k views • Faster than Cricbuzz</div></div>
-<div style="padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;border-left:3px solid #fb923c"><b style="font-size:12px">Rashford Goal 78' - MUN 2-1 ARS - Comeback</b><div style="font-size:10px;color:#94a3b8;margin-top:4px">30m ago • Premier League</div></div>
-<div style="padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;border-left:3px solid #22c55e"><b style="font-size:12px">Dream11 Tips: Rohit + Rashford captain</b><div style="font-size:10px;color:#94a3b8;margin-top:4px">1h ago • Win ₹1L</div></div>
+<div class="card">
+<div class="cardHeader"><h3>Football • Old Trafford • 72:15</h3><div class="liveBadge football"><i></i> LIVE</div></div>
+<div class="cardBody">
+<div style="font-size:17px;font-weight:700;letter-spacing:-0.2px">MAN UTD 2 - 1 CHE</div>
+<div class="meta" style="margin-top:6px">Premier League • Crowd 67.3K • Possession 54-46%</div>
+<div style="display:flex;align-items:baseline;gap:16px;margin-top:16px"><div class="score">2 - 1</div><div class="meta">Rashford 63' • Saka 21'</div></div>
+<div style="margin-top:16px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px"><span>Crowd Energy</span><span>84%</span></div><div style="height:4px;background:var(--bg);border-radius:999px;overflow:hidden;border:1px solid var(--border)"><div style="width:84%;height:100%;background:var(--text)"></div></div></div>
 </div>
 </div>
 </div>
 
-<!-- TABLE SECTION -->
-<div id="sec-table" class="section">
-<div class="card"><div style="font-weight:800">📊 Points Table • IPL + EPL</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
-<div><div style="font-size:11px;font-weight:800;color:#7dd3fc;margin-bottom:6px">IPL 2024</div><div style="font-size:11px;display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;padding:6px;background:rgba(56,189,248,0.1);border-radius:8px"><span>KKR</span><span>20 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px"><span>MI</span><span>16 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px"><span>CSK</span><span>16 pts</span></div></div></div>
-<div><div style="font-size:11px;font-weight:800;color:#fdba74;margin-bottom:6px">Premier League</div><div style="font-size:11px;display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;padding:6px;background:rgba(251,146,60,0.1);border-radius:8px"><span>MCI</span><span>84 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px"><span>ARS</span><span>82 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px"><span>MUN</span><span>72 pts</span></div></div></div>
+<div style="margin-top:20px;display:flex;align-items:center;justify-content:space-between">
+<div class="tabs">
+<div class="tab active" onclick="switchTab('news',this)">News</div>
+<div class="tab" onclick="switchTab('predict',this)">Predict</div>
+<div class="tab" onclick="switchTab('table',this)">Table</div>
 </div>
+<div style="font-size:12px;color:var(--muted)">Updated just now • Faster than Cricbuzz</div>
+</div>
+
+<div id="tab-news" class="card" style="margin-top:12px">
+<div class="cardHeader"><h3>Latest News</h3><span style="font-size:12px;color:var(--muted)">View all →</span></div>
+<div class="newsList">
+<div class="newsItem"><img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=80&h=80&fit=crop"><div><b>Rohit Sharma smashes 84* (52) - Sixes raining at Eden Gardens, MI needs 38 from 9</b><span>2h ago • 12.4k views • IPL Final • Live</span></div></div>
+<div class="newsItem"><img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=80&h=80&fit=crop"><div><b>Marcus Rashford Goal 78' - Man United comeback 2-1 vs Chelsea at Old Trafford</b><span>30m ago • 8.2k views • Premier League</span></div></div>
+<div class="newsItem"><img src="https://images.unsplash.com/photo-1482939659648-eb4d0d7e06c7?w=80&h=80&fit=crop"><div><b>Points Table: KKR qualifies for playoffs, MI vs CSK race for second spot heats up</b><span>1h ago • IPL 2024 • Analysis</span></div></div>
 </div>
 </div>
 
-<!-- FANS SECTION -->
-<div id="sec-fans" class="section">
-<div class="card"><div style="font-weight:800">🔥 Fan Wall • Meme Zone • Viral</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">
-<div style="border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden"><div style="height:70px;background:linear-gradient(135deg,#38bdf8,#8b5cf6)"></div><div style="padding:8px;font-size:11px;font-weight:700">Rohit 6 😂<br><span style="color:#94a3b8">234 likes</span></div></div>
-<div style="border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden"><div style="height:70px;background:linear-gradient(135deg,#fb923c,#f59e0b)"></div><div style="padding:8px;font-size:11px;font-weight:700">Thala 💛<br><span style="color:#94a3b8">189 likes</span></div></div>
-<div style="border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden"><div style="height:70px;background:linear-gradient(135deg,#22c55e,#16a34a)"></div><div style="padding:8px;font-size:11px;font-weight:700">MUN 🔥<br><span style="color:#94a3b8">156 likes</span></div></div>
+<div id="tab-predict" class="card" style="margin-top:12px;display:none">
+<div class="cardHeader"><h3>Predict & Win</h3></div>
+<div class="poll"><div class="pollQ">Who will win? IND vs AUS - T20 International</div><div class="pollOpts"><button class="pollOpt active" onclick="selectPoll(this)">IND <span>62%</span></button><button class="pollOpt" onclick="selectPoll(this)">AUS <span>38%</span></button></div><div style="font-size:11px;color:var(--muted);margin-top:10px">342 votes • Live poll • Ends in 1 hour</div></div>
+<div class="poll" style="border-top:1px solid var(--border)"><div class="pollQ">Man of the Match?</div><div class="pollOpts"><button class="pollOpt" onclick="selectPoll(this)">Rohit</button><button class="pollOpt" onclick="selectPoll(this)">Rashford</button><button class="pollOpt" onclick="selectPoll(this)">Bumrah</button></div></div>
 </div>
-<div style="display:flex;gap:6px;margin-top:10px"><input id="memeInput" placeholder="Write meme..." style="flex:1;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;font-size:11px"><button class="btn cricket" onclick="postMeme()">Post +50</button></div>
-</div>
+
+<div id="tab-table" class="card" style="margin-top:12px;display:none">
+<div class="cardHeader"><h3>Points Table</h3><div class="tabs" style="margin:0"><div class="tab active">IPL</div><div class="tab">EPL</div></div></div>
+<table class="table"><thead><tr><th>Team</th><th>P</th><th>Pts</th><th>NRR</th></tr></thead><tbody><tr><td><b>1. KKR</b> • Q</td><td>14</td><td>20</td><td>+1.428</td></tr><tr><td><b>2. MI</b></td><td>13</td><td>16</td><td>+0.412</td></tr><tr><td><b>3. CSK</b></td><td>13</td><td>16</td><td>+0.386</td></tr><tr><td><b>4. RCB</b></td><td>13</td><td>14</td><td>+0.124</td></tr></tbody></table>
 </div>
 </div>
 
 <div class="right">
-<div class="chat">
-<div style="padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;font-size:11px;font-weight:800"><span>💬 Live Chat • Motion Reactions</span><span style="color:#7dd3fc" id="online">343 online</span></div>
-<div class="chat-b" id="chatBody"><div class="m other"><b>RohitFan:</b> Full motion is insane! 🔥</div><div class="m other"><b>MUN Fan:</b> Ball flying everywhere! ⚽</div></div>
-<div style="display:flex;gap:6px;padding:10px;border-top:1px solid rgba(255,255,255,0.08)"><input id="chatInput" placeholder="Type - triggers motion" style="flex:1;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;outline:none;font-size:11px"><button style="padding:10px 16px;border-radius:999px;border:none;background:linear-gradient(90deg,#38bdf8,#fb923c);color:#fff;font-weight:800;cursor:pointer;font-size:11px" onclick="sendChat()">Send</button></div>
+<div class="card chat">
+<div class="cardHeader"><h3>Live Chat • 342 online • No bot</h3><span style="width:8px;height:8px;background:#22c55e;border-radius:50%"></span></div>
+<div class="chatBody" id="chatBody">
+<div class="msg other"><b>RohitFan:</b> Clean American design 🔥 Finally no extra clutter</div>
+<div class="msg other"><b>MUN Fan:</b> Looks like Linear + Stripe - Minimal and premium</div>
+<div class="msg other"><b>You:</b> Only what we need - chat, news, predict, table</div>
+</div>
+<div class="chatInput"><input id="chatInput" placeholder="Write a message..."><button class="btn primary" onclick="sendChat()">Send</button></div>
 </div>
 
-<div class="card cricket" style="margin-top:0"><div style="font-size:11px;font-weight:800;color:#7dd3fc">🎮 Super Over • Live Motion</div><div style="display:flex;gap:6px;margin-top:8px"><button class="tab active cricket" onclick="playBall('Yorker')">Yorker</button><button class="tab active cricket" onclick="playBall('Bouncer')">Bouncer</button><button class="tab active cricket" onclick="playBall('Slower')">Slower</button></div><div id="overRes" style="margin-top:8px;font-size:11px;font-weight:700;text-align:center;background:rgba(255,255,255,0.06);padding:8px;border-radius:10px">Click ball to play! Triggers flying ball!</div></div>
+<div class="card">
+<div class="cardHeader"><h3>Live Commentary</h3><span style="font-size:11px;color:var(--muted)">Ball by ball</span></div>
+<div style="padding:14px 18px;display:flex;flex-direction:column;gap:12px;font-size:13px">
+<div><span style="font-weight:700">18.3</span> <span style="color:var(--muted)">•</span> Rohit smashes 6 over long-on! 187/4 • Need 38 from 9</div>
+<div><span style="font-weight:700">18.2</span> <span style="color:var(--muted)">•</span> WICKET! Jadeja bowls Bumrah - 2/24</div>
+<div><span style="font-weight:700">18.1</span> <span style="color:var(--muted)">•</span> 4 - Full toss, Rohit drives through covers</div>
+<div style="font-size:12px;color:var(--muted);margin-top:4px">Faster than Cricbuzz • Auto-refresh • Little motion, more focus</div>
 </div>
 </div>
-
-<div class="ticker"><div class="tickerTrack"><span>● LIVE • 🏏 IND 187/4 (18.2) • ⚽ MUN 2-1 CHE (72:15) • 🎆 Ball Flying • ✨ Particles • 🌟 Neon Glow • 🔊 Waveform • 12,847 WATCHING • Blue = Cricket • Orange = Football • </span><span>● LIVE • 🏏 IND 187/4 (18.2) • ⚽ MUN 2-1 CHE (72:15) • 🎆 Ball Flying • ✨ Particles • 🌟 Neon Glow • 🔊 Waveform • 12,847 WATCHING • Blue = Cricket • Orange = Football • </span></div></div>
+</div>
+</div>
 
 <script>
-let coins=parseInt(localStorage.getItem('coinsFinal')||'340'), team=[];
-const canvas=document.getElementById('canvas'), ctx=canvas.getContext('2d');
-function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
-resize(); addEventListener('resize', resize);
-const parts=[]; for(let i=0;i<100;i++) parts.push({x:Math.random()*innerWidth, y:Math.random()*innerHeight, vx:(Math.random()-0.5)*0.6, vy:(Math.random()-0.5)*0.6, r:Math.random()*2+1, c:Math.random()>0.5?'#38bdf8':'#fb923c', a:Math.random()*0.5+0.3});
-function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width) p.vx*=-1; if(p.y<0||p.y>canvas.height) p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c; ctx.globalAlpha=p.a; ctx.shadowBlur=10; ctx.shadowColor=p.c; ctx.fill(); }); requestAnimationFrame(draw); }
-draw();
-
-function switchSection(sec,btn){ document.querySelectorAll('.section').forEach(s=>s.classList.remove('active')); document.getElementById('sec-'+sec).classList.add('active'); document.querySelectorAll('.navTab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+function switchTab(tab,el){
+  document.querySelectorAll('[id^=\"tab-\"]').forEach(e=>e.style.display='none');
+  const t=document.getElementById('tab-'+tab);
+  if(t) t.style.display='block';
+  if(el && el.classList.contains('tab')){
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+  }
+  if(el && el.tagName==='A'){
+    document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
+    el.classList.add('active');
+  }
+}
 function toggleNotif(){ document.getElementById('notifPanel').classList.toggle('show'); }
-function triggerSix(){ const b=document.getElementById('flyBall'); b.src='https://upload.wikimedia.org/wikipedia/commons/7/7d/Cricket_ball.png'; b.style.display='block'; b.style.left='-100px'; b.style.top='30%'; b.animate([{left:'-100px', top:'30%', transform:'rotate(0deg) scale(0.8)'},{left:'50%', top:'10%', transform:'rotate(720deg) scale(1.8)'},{left:'120%', top:'40%', transform:'rotate(1080deg) scale(0.5)'}], {duration:1200, easing:'ease-out'}).onfinish=()=>{ b.style.display='none'; for(let i=0;i<12;i++) setTimeout(()=>react(['🔥','6️⃣','💙','✨'][Math.floor(Math.random()*4)]), i*60); }; }
-function triggerGoal(){ const b=document.getElementById('flyBall'); b.src='https://upload.wikimedia.org/wikipedia/commons/a/a3/Soccer_ball.svg'; b.style.display='block'; b.style.left='-100px'; b.style.top='50%'; b.animate([{left:'-100px', transform:'rotate(0deg)'},{left:'50%', transform:'rotate(720deg) scale(1.8)'},{left:'120%', transform:'rotate(1080deg) scale(0.5)'}], {duration:1100}).onfinish=()=>{ b.style.display='none'; for(let i=0;i<15;i++) setTimeout(()=>react(['⚽','🔥','🎉'][Math.floor(Math.random()*3)]), i*50); }; }
-function react(e){ const d=document.createElement('div'); d.className='reaction'; d.textContent=e; d.style.left=Math.random()*80+10+'%'; d.style.bottom='80px'; document.body.appendChild(d); setTimeout(()=>d.remove(),2000); }
-function renderTeam(){ const p=['Rohit','Kohli','Bumrah','Rashford','Saka','Palmer','Russell','Gill']; document.getElementById('teamGrid').innerHTML=p.map(x=>`<div style="aspect-ratio:1;background:${team.includes(x)?'#fff':'rgba(255,255,255,0.06)'};color:${team.includes(x)?'#0f172a':'#94a3b8'};border:1px solid rgba(255,255,255,0.1);border-radius:10px;display:grid;place-items:center;font-size:10px;font-weight:800;cursor:pointer" onclick="toggleP('${x}')">${x}</div>`).join(''); }
-function toggleP(x){ if(team.includes(x)) team=team.filter(t=>t!==x); else if(team.length<6) team.push(x); renderTeam(); react('⭐'); triggerSix(); }
-function saveTeam(){ if(team.length<3){ alert('Pick 3'); return; } coins+=100; localStorage.setItem('coinsFinal',coins); document.getElementById('coins').textContent=coins; triggerSix(); alert('Team saved +100 coins!'); }
-function playBall(b){ const o=['6 - SIX!','W - OUT!','4 - FOUR!','0 - Dot']; const r=o[Math.floor(Math.random()*o.length)]; document.getElementById('overRes').textContent=b+' → '+r; if(r.includes('6')) triggerSix(); if(r.includes('OUT')) triggerGoal(); react(r.includes('6')?'6️⃣':'⚡'); }
-function postMeme(){ const inp=document.getElementById('memeInput'); if(!inp.value.trim()) return; coins+=50; localStorage.setItem('coinsFinal',coins); document.getElementById('coins').textContent=coins; react('😂'); alert('Meme posted +50 coins!'); inp.value=''; }
-function sendChat(){ const inp=document.getElementById('chatInput'); const txt=inp.value.trim(); if(!txt) return; const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='m me'; d.innerHTML='<b>You:</b> '+txt; b.appendChild(d); inp.value=''; b.scrollTop=b.scrollHeight; localStorage.setItem('chatFinal',b.innerHTML); coins+=10; localStorage.setItem('coinsFinal',coins); document.getElementById('coins').textContent=coins; react('💬'); if(Math.random()>0.5) triggerSix(); else triggerGoal(); }
-
+function selectPoll(btn){
+  const group=btn.parentElement;
+  group.querySelectorAll('.pollOpt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function sendChat(){
+  const inp=document.getElementById('chatInput');
+  const txt=inp.value.trim();
+  if(!txt) return;
+  const body=document.getElementById('chatBody');
+  const d=document.createElement('div');
+  d.className='msg me';
+  d.innerHTML='<b>You:</b> '+txt;
+  body.appendChild(d);
+  inp.value='';
+  body.scrollTop=body.scrollHeight;
+  localStorage.setItem('chatCleanUS',body.innerHTML);
+}
 window.onload=function(){
-  document.getElementById('cWave').innerHTML=Array.from({length:20}).map((_,i)=>`<i style="animation-delay:${i*0.07}s;height:${8+Math.random()*16}px"></i>`).join('');
-  document.getElementById('fWave').innerHTML=Array.from({length:20}).map((_,i)=>`<i style="animation-delay:${i*0.07}s;height:${8+Math.random()*16}px"></i>`).join('');
-  renderTeam();
-  document.getElementById('leader').innerHTML=`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px"><span>1. You</span><b>${coins} pts</b></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px"><span>2. RohitFan</span><b>520 pts</b></div><div style="display:flex;justify-content:space-between;padding:5px 0;font-size:11px"><span>3. MUN Fan</span><b>480 pts</b></div>`;
   document.getElementById('chatInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); sendChat(); } });
-  try{ const s=localStorage.getItem('chatFinal'); if(s) document.getElementById('chatBody').innerHTML=s; }catch(e){}
-  setInterval(()=>{ document.getElementById('online').textContent=Math.floor(300+Math.random()*80)+' online • Motion ON'; if(Math.random()>0.8) Math.random()>0.5?triggerSix():triggerGoal(); },4000);
+  try{ const s=localStorage.getItem('chatCleanUS'); if(s) document.getElementById('chatBody').innerHTML=s; }catch(e){}
+  document.addEventListener('click', e=>{ const p=document.getElementById('notifPanel'); if(!e.target.closest('.icon') && !e.target.closest('.notifPanel')) p.classList.remove('show'); });
 }
 </script>
 </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                          </html>
+  </html>
