@@ -1,150 +1,142 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orbittroniz - Faster Than Cricbuzz - Live Scores, Fan Wall, Dream11, Polls, No Login</title>
-<meta name="description" content="Fastest IPL, EPL live scores, ball by ball, live chat no AI bot, fan wall memes, Dream11 builder, polls, super over, leaderboard - no login needed.">
-<meta property="og:title" content="Orbittroniz - Live Scores + Fan Wall + No Login">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SportsEvent","name":"MI vs CSK Live"}</script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orbittroniz V19 - Full Live Motion</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
-:root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--border:#e2e8f0;--muted:#64748b}
-body.dark{--bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--border:#334155;--muted:#94a3b8;background:#0f172a}
-body{background:var(--bg);color:var(--text);transition:0.3s}
-.header{height:64px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
-.logo{font-weight:900;font-size:20px;display:flex;gap:10px;align-items:center}
-.logo i{width:36px;height:36px;background:var(--text);color:var(--card);border-radius:12px;display:grid;place-items:center}
-.content{max-width:1360px;margin:0 auto;padding:20px;display:grid;grid-template-columns:1fr 360px;gap:20px}
-@media(max-width:1100px){.content{grid-template-columns:1fr}}
-.bento{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}
+body{background:#020617;color:#e2e8f0;overflow-x:hidden}
+#bg{position:fixed;inset:0;z-index:-4;background:linear-gradient(90deg,#020617 0%,#0c1a2e 25%,#1a1505 75%,#020617 100%)}
+#canvas{position:fixed;inset:0;z-index:-3}
+#stadium{position:fixed;inset:0;z-index:-2;background:radial-gradient(600px 400px at 20% 20%, rgba(56,189,248,0.25) 0%, transparent 60%), radial-gradient(600px 400px at 80% 30%, rgba(251,146,60,0.25) 0%, transparent 60%), radial-gradient(1000px 600px at 50% 100%, rgba(14,165,233,0.1), transparent);animation:stadiumPulse 3s infinite alternate}
+@keyframes stadiumPulse{0%{opacity:0.8;transform:scale(1)}100%{opacity:1;transform:scale(1.05)}}
+.header{margin:12px;height:60px;background:linear-gradient(90deg,rgba(56,189,248,0.15),rgba(251,146,60,0.15));backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);border-radius:16px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;animation:headerGlow 2s infinite alternate}
+@keyframes headerGlow{0%{box-shadow:0 0 20px rgba(56,189,248,0.2)}100%{box-shadow:0 0 40px rgba(251,146,60,0.3)}}
+.logo{font-weight:900;display:flex;gap:10px;align-items:center;animation:logoFloat 3s infinite alternate}
+@keyframes logoFloat{0%{transform:translateY(0)}100%{transform:translateY(-2px)}}
+.logo b{width:36px;height:36px;background:linear-gradient(90deg,#38bdf8,#fb923c);border-radius:10px;display:grid;place-items:center;animation:spinSlow 4s linear infinite}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+.content{max-width:1320px;margin:0 auto;padding:0 12px 90px;display:grid;grid-template-columns:1fr 340px;gap:14px}
+@media(max-width:1000px){.content{grid-template-columns:1fr}}
+.bento{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
 @media(max-width:800px){.bento{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,0.04);transition:0.3s}
-.card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,0.08)}
-.card h3{font-size:11px;text-transform:uppercase;letter-spacing:0.7px;color:var(--muted);font-weight:800;margin-bottom:12px;display:flex;justify-content:space-between}
-.score{font-size:36px;font-weight:900;letter-spacing:-2px;text-align:center}
-.balls{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
-.ball{width:28px;height:28px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;font-size:11px;font-weight:800}
-.ball.six{background:var(--text);color:var(--card)}
-.ball.w{background:#ef4444;color:#fff}
-.tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px}
-.tab{padding:7px 14px;border-radius:999px;background:var(--bg);border:1px solid var(--border);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
-.tab.active{background:var(--text);color:var(--card);border-color:var(--text)}
-.poll{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.poll button{padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-weight:800;cursor:pointer}
-.poll button:hover{background:var(--text);color:var(--card)}
-.timeline{max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--bg);font-size:11px;line-height:1.6;margin-top:10px}
-.timeline div{padding:4px 0;border-bottom:1px dashed var(--border)}
-.timeline b{color:var(--text)}
-.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
-.slot{aspect-ratio:1;background:var(--bg);border:1px dashed var(--border);border-radius:12px;display:grid;place-items:center;font-size:10px;font-weight:700;cursor:pointer}
-.slot.on{background:var(--text);color:var(--card);border-style:solid}
-.right{display:flex;flex-direction:column;gap:16px;position:sticky;top:84px;height:fit-content}
-.chat{border:1px solid var(--border);border-radius:20px;overflow:hidden;background:var(--card);display:flex;flex-direction:column;height:380px}
-.chat-h{padding:14px 16px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-size:12px;font-weight:800}
-.chat-b{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
-.m{padding:10px 14px;border-radius:18px;font-size:12px;max-width:80%}
-.m.me{align-self:flex-end;background:var(--text);color:var(--card);border-bottom-right-radius:6px}
-.m.other{align-self:flex-start;background:var(--bg);border:1px solid var(--border);border-bottom-left-radius:6px}
-.chat-f{display:flex;gap:8px;padding:12px;background:var(--card);border-top:1px solid var(--border)}
-.chat-f input{flex:1;padding:11px 16px;border-radius:999px;border:1px solid var(--border);background:var(--bg);outline:none}
-.chat-f button{padding:11px 18px;border-radius:999px;border:none;background:var(--text);color:var(--card);font-weight:800;cursor:pointer}
-.leader{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;font-weight:600}
-.leader b{font-size:11px;color:var(--muted)}
+.card{border-radius:20px;padding:16px;backdrop-filter:blur(20px);position:relative;overflow:hidden;animation:cardFloat 4s infinite alternate}
+@keyframes cardFloat{0%{transform:translateY(0) rotateX(0)}100%{transform:translateY(-3px) rotateX(1deg)}}
+.card.cricket{background:linear-gradient(135deg,rgba(56,189,248,0.15),rgba(15,23,42,0.7));border:1px solid rgba(56,189,248,0.3);box-shadow:0 0 30px rgba(56,189,248,0.2), 0 20px 60px rgba(0,0,0,0.5);animation:cricketGlow 2s infinite alternate}
+@keyframes cricketGlow{0%{box-shadow:0 0 20px rgba(56,189,248,0.2)}100%{box-shadow:0 0 40px rgba(56,189,248,0.4)}}
+.card.football{background:linear-gradient(135deg,rgba(251,146,60,0.15),rgba(30,15,5,0.7));border:1px solid rgba(251,146,60,0.3);box-shadow:0 0 30px rgba(251,146,60,0.2), 0 20px 60px rgba(0,0,0,0.5);animation:footballGlow 2s infinite alternate}
+@keyframes footballGlow{0%{box-shadow:0 0 20px rgba(251,146,60,0.2)}100%{box-shadow:0 0 40px rgba(251,146,60,0.4)}}
+.card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:2px;background:linear-gradient(90deg,transparent,#38bdf8,transparent);animation:shine 2s infinite}
+.card.football::before{background:linear-gradient(90deg,transparent,#fb923c,transparent)}
+@keyframes shine{0%{left:-100%}100%{left:100%}}
+.score{font-size:44px;font-weight:900;letter-spacing:-2px;animation:scorePulse 1.5s infinite alternate}
+@keyframes scorePulse{0%{transform:scale(1);text-shadow:0 0 10px currentColor}100%{transform:scale(1.03);text-shadow:0 0 30px currentColor}}
+.score.cricket{color:#7dd3fc}
+.score.football{color:#fdba74}
+.wave{display:flex;gap:3px;height:30px;justify-content:center;margin-top:10px}
+.wave i{width:4px;border-radius:999px;animation:wave 0.7s infinite alternate}
+.wave.cricket i{background:linear-gradient(180deg,#38bdf8,#0ea5e9);box-shadow:0 0 10px #38bdf8}
+.wave.football i{background:linear-gradient(180deg,#fb923c,#f97316);box-shadow:0 0 10px #fb923c}
+@keyframes wave{0%{height:6px}100%{height:30px}}
+.balls{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.ball{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;animation:ballPop 0.5s, ballFloat 2s infinite alternate}
+@keyframes ballPop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes ballFloat{0%{transform:translateY(0)}100%{transform:translateY(-4px)}}
+.ball.six.cricket{background:#38bdf8;color:#fff;box-shadow:0 0 20px #38bdf8;animation:ballPop 0.5s, sixBounce 0.6s infinite alternate}
+@keyframes sixBounce{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-8px) scale(1.1)}}
+.btn{padding:10px 18px;border-radius:999px;font-weight:800;cursor:pointer;border:1px solid;transition:0.2s;animation:btnPulse 2s infinite alternate}
+@keyframes btnPulse{0%{transform:scale(1)}100%{transform:scale(1.05)}}
+.btn.cricket{border-color:#38bdf8;background:rgba(56,189,248,0.15);color:#7dd3fc}
+.btn.football{border-color:#fb923c;background:rgba(251,146,60,0.15);color:#fdba74}
+.fly{position:fixed;width:80px;height:80px;z-index:100;pointer-events:none;display:none}
+.ticker{position:fixed;bottom:12px;left:12px;right:12px;height:44px;background:linear-gradient(90deg,rgba(56,189,248,0.2),rgba(251,146,60,0.2));backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);border-radius:999px;display:flex;align-items:center;overflow:hidden;z-index:50;animation:tickerGlow 2s infinite alternate}
+@keyframes tickerGlow{0%{box-shadow:0 0 20px rgba(56,189,248,0.2)}100%{box-shadow:0 0 40px rgba(251,146,60,0.3)}}
+.tickerTrack{display:flex;gap:40px;animation:marquee 30s linear infinite;white-space:nowrap;font-weight:700}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.light{position:absolute;width:60px;height:60px;background:radial-gradient(circle, rgba(255,255,255,0.9), transparent 60%);border-radius:50%;filter:blur(10px);animation:lightBlink 1s infinite alternate}
+@keyframes lightBlink{0%{opacity:0.4;transform:scale(0.8)}100%{opacity:1;transform:scale(1.3)}}
+.chat{border-radius:20px;background:linear-gradient(180deg,rgba(56,189,248,0.08),rgba(251,146,60,0.08));border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(20px);display:flex;flex-direction:column;height:400px}
+.reaction{position:fixed;font-size:26px;pointer-events:none;z-index:90;animation:rise 2s ease-out forwards}
+@keyframes rise{0%{transform:translateY(0) scale(0.5);opacity:1}100%{transform:translateY(-250px) scale(1.8);opacity:0}}
 </style>
 </head>
 <body>
+<div id="bg"></div>
+<canvas id="canvas"></canvas>
+<div id="stadium"></div>
+<img id="flyBall" class="fly" src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Cricket_ball.png">
+
 <div class="header">
-<div class="logo"><i>◉</i> Orbittroniz</div>
-<div style="display:flex;gap:8px">
-<button style="padding:8px 14px;border-radius:999px;border:1px solid var(--border);background:var(--card);font-size:12px;font-weight:700;cursor:pointer" onclick="document.body.classList.toggle('dark')">🌗 Theme</button>
-<button style="padding:8px 14px;border-radius:999px;border:1px solid var(--border);background:var(--text);color:var(--card);font-size:12px;font-weight:700;cursor:pointer" onclick="document.documentElement.requestFullscreen()">⛶ Focus</button>
-</div>
+<div class="logo"><b>◉</b> Orbittroniz • FULL LIVE MOTION • V19</div>
+<div style="display:flex;gap:8px"><button class="btn cricket" onclick="triggerSix()">🏏 6 Effect</button><button class="btn football" onclick="triggerGoal()">⚽ Goal Effect</button></div>
 </div>
 
 <div class="content">
 <div>
 <div class="bento">
-<div class="card">
-<h3>🏏 IPL Final • MI 187/4 (18.3) <span style="background:var(--text);color:var(--card);padding:4px 10px;border-radius:999px">LIVE • <span id="cWatch">1.2k</span></span></h3>
-<div class="tabs"><button class="tab active" onclick="pickC(0)">MI vs CSK</button><button class="tab" onclick="pickC(1)">RCB vs GT</button><button class="tab" onclick="pickC(2)">KKR vs SRH</button></div>
-<div id="cBox"></div>
-<div class="timeline" id="timeline"></div>
-<div class="poll"><button onclick="vote('MI')">MI Win <span id="vMI">62%</span></button><button onclick="vote('CSK')">CSK Win <span id="vCSK">38%</span></button></div>
+<div class="card cricket"><div class="light" style="top:-20px;right:20px"></div><div class="light" style="top:-10px;right:80px;animation-delay:0.5s"></div>
+<div style="font-size:11px;font-weight:800;color:#7dd3fc;letter-spacing:0.8px">● LIVE NOW • CRICKET • MOTION ON</div>
+<div style="font-size:18px;font-weight:800;color:#fff;margin-top:6px">IND vs AUS — T20 International • Eden Gardens</div>
+<div class="score cricket" style="margin-top:12px">187 / 4</div>
+<div style="font-size:12px;color:#94a3b8;margin-top:6px">Run Rate 10.24 • Partnership 42(24) • 6s:9 4s:12 • Need 38 from 9</div>
+<div class="balls"><div class="ball six cricket">6</div><div class="ball">4</div><div class="ball six cricket">6</div><div class="ball" style="background:#ef4444;color:#fff">W</div><div class="ball">1</div><div class="ball six cricket">6</div></div>
+<div class="wave cricket" id="cWave"></div>
+<div style="display:flex;gap:8px;margin-top:12px"><button class="btn cricket" style="flex:1" onclick="react('🔥')">🔥 Live Motion</button><button class="btn cricket" style="flex:1" onclick="triggerSix()">🎆 Blast 6</button></div>
 </div>
 
-<div class="card">
-<h3>⚽ EPL • MUN 2-1 ARS • Live</h3>
-<div id="fBox"></div>
-<div class="poll"><button onclick="voteF('MUN')">MUN <span id="vMUN">58%</span></button><button onclick="voteF('ARS')">ARS <span id="vARS">42%</span></button></div>
-<div style="margin-top:12px"><b style="font-size:11px">Player Battle</b><div style="display:flex;gap:8px;margin-top:6px"><div style="flex:1;padding:8px;background:var(--bg);border-radius:10px;text-align:center;font-size:11px;font-weight:700">Rashford<br>1G 1A<br>⭐ 9.2</div><div style="flex:1;padding:8px;background:var(--bg);border-radius:10px;text-align:center;font-size:11px;font-weight:700">Saka<br>1G<br>⭐ 7.8</div></div></div>
-</div>
-</div>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
-<div class="card"><h3>🎯 Dream11 Builder • No Login</h3><div style="font-size:11px;color:var(--muted)">Pick 6 - Earn coins</div><div class="team-grid" id="teamGrid"></div><button style="width:100%;margin-top:10px;padding:10px;border-radius:12px;border:none;background:var(--text);color:var(--card);font-weight:800;cursor:pointer" onclick="saveTeam()">Save Team +100 Coins</button></div>
-<div class="card"><h3>🏆 Leaderboard • Local • No Login</h3><div id="leader"></div><div style="margin-top:10px;font-size:11px;color:var(--muted)">Your coins: <b id="coins">340</b> • Earn by chat, polls, team</div><button style="width:100%;margin-top:8px;padding:8px;border-radius:10px;border:1px solid var(--border);background:var(--bg);font-size:11px;font-weight:700;cursor:pointer" onclick="redeem()">🎁 Redeem Rewards</button></div>
-</div>
-
-<div class="card" style="margin-top:16px"><h3>🔥 Fan Wall + Meme Zone • Viral</h3>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px"><div style="border:1px solid var(--border);border-radius:12px;overflow:hidden"><div style="height:90px;background:linear-gradient(135deg,#dbeafe,#fef9c3)"></div><div style="padding:8px;font-size:11px;font-weight:700">When Rohit hits 6 😂<br><span style="color:var(--muted)">234 likes • Your meme?</span></div></div><div style="border:1px solid var(--border);border-radius:12px;overflow:hidden"><div style="height:90px;background:linear-gradient(135deg,#fecaca,#fde68a)"></div><div style="padding:8px;font-size:11px;font-weight:700">Thala finish 💛<br><span style="color:var(--muted)">189 likes</span></div></div><div style="border:1px solid var(--border);border-radius:12px;overflow:hidden"><div style="height:90px;background:linear-gradient(135deg,#bbf7d0,#dbeafe)"></div><div style="padding:8px;font-size:11px;font-weight:700">MUN comeback 🔥<br><span style="color:var(--muted)">156 likes</span></div></div></div>
-<div style="display:flex;gap:8px;margin-top:10px"><input id="memeInput" placeholder="Write meme caption..." style="flex:1;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:var(--bg);font-size:11px"><button style="padding:8px 14px;border-radius:999px;border:none;background:var(--text);color:var(--card);font-size:11px;font-weight:700;cursor:pointer" onclick="postMeme()">Post Meme +50 Coins</button></div>
-</div>
-
-<div class="card" style="margin-top:16px"><h3>🎮 Super Over Simulator + Highlights</h3>
-<div style="display:flex;gap:6px"><button class="tab" onclick="play('Yorker')">Yorker</button><button class="tab" onclick="play('Bouncer')">Bouncer</button><button class="tab" onclick="play('Slower')">Slower</button><button class="tab" onclick="play('Full')">Full Toss</button></div>
-<div id="overRes" style="margin-top:10px;font-size:12px;font-weight:700;text-align:center;background:var(--bg);padding:10px;border-radius:10px">Click ball to play super over!</div>
-<div style="margin-top:12px"><b style="font-size:11px">Highlights Reel (SEO Video)</b><div style="display:flex;gap:8px;margin-top:6px"><div style="flex:1;height:60px;background:var(--bg);border:1px solid var(--border);border-radius:10px;display:grid;place-items:center;font-size:10px">▶️ Rohit 84*</div><div style="flex:1;height:60px;background:var(--bg);border:1px solid var(--border);border-radius:10px;display:grid;place-items:center;font-size:10px">▶️ Rashford Goal</div><div style="flex:1;height:60px;background:var(--bg);border:1px solid var(--border);border-radius:10px;display:grid;place-items:center;font-size:10px">▶️ Bumrah Wickets</div></div></div>
+<div class="card football"><div class="light" style="top:-20px;right:20px;background:radial-gradient(circle, rgba(251,146,60,0.9), transparent 60%)"></div>
+<div style="font-size:11px;font-weight:800;color:#fdba74;letter-spacing:0.8px">● FOOTBALL • LIVE • OLD TRAFFORD</div>
+<div style="font-size:20px;font-weight:800;color:#fff;margin-top:6px">MAN UTD 2 - 1 CHE</div>
+<div style="font-size:12px;color:#fdba74;margin-top:4px">72:15 • Crowd 67.3K • Stadium Energy 92%</div>
+<div class="score football" style="margin-top:12px">2 - 1</div>
+<div style="margin-top:10px;height:8px;background:rgba(255,255,255,0.1);border-radius:999px;overflow:hidden"><div style="width:84%;height:100%;background:linear-gradient(90deg,#fb923c,#f97316);box-shadow:0 0 12px #fb923c;animation:barGrow 2s infinite alternate"></div></div>
+<div class="wave football" id="fWave"></div>
+<div style="display:flex;gap:8px;margin-top:12px"><button class="btn football" style="flex:1" onclick="react('⚽')">⚽ Motion</button><button class="btn football" style="flex:1" onclick="triggerGoal()">🥅 Goal Blast</button></div>
 </div>
 </div>
 
-<div class="right">
-<div class="chat">
-<div class="chat-h"><span>💬 Live Chat • Real Members • No Bot</span><span style="font-size:11px;color:var(--muted)" id="online">342 online</span></div>
-<div class="chat-b" id="chatBody">
-<div class="m other"><b>RohitFan:</b> 187/4! No login needed 🔥</div>
-<div class="m other"><b>Dream11 Pro:</b> Built team + earned 100 coins</div>
-<div class="m other"><b>Meme King:</b> Posted Thala meme +50 coins 😂</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+<div class="card cricket"><div style="font-size:12px;font-weight:800;color:#7dd3fc">🎯 Dream11 Builder • Live Motion</div><div id="teamGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px"></div><button class="btn cricket" style="width:100%;margin-top:10px" onclick="saveTeam()">Save +100 Coins + Motion</button></div>
+<div class="card football"><div style="font-size:12px;font-weight:800;color:#fdba74">🏆 Leaderboard • Motion Coins</div><div id="leader" style="margin-top:8px"></div><div style="margin-top:8px;font-size:11px;color:#fdba74">Coins: <b id="coins" style="color:#fff">340</b> • Every click = motion + coins</div></div>
 </div>
-<div class="chat-f"><input id="chatInput" placeholder="Chat as member - no AI bot - earn 10 coins"><button onclick="sendChat()">Send</button></div>
 </div>
 
-<div class="card"><h3>📊 Points Table + Fixtures</h3>
-<div style="font-size:11px"><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>KKR</span><span>20 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>MI</span><span>16 pts</span></div><div style="display:flex;justify-content:space-between;padding:6px 0"><span>MUN</span><span>72 pts</span></div></div>
-<div style="margin-top:12px"><b style="font-size:11px">Tomorrow</b><div style="font-size:11px;color:var(--muted);margin-top:4px">MI vs RCB 7:30 PM • ARS vs CHE 9 PM</div></div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div class="chat"><div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;font-size:12px;font-weight:800"><span>💬 Live Chat • Motion Reactions</span><span style="color:#7dd3fc" id="online">342 online</span></div><div style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px" id="chatBody"><div style="padding:10px 14px;border-radius:16px;background:rgba(255,255,255,0.08);font-size:12px"><b>RohitFan:</b> Full motion is insane! 🔥</div><div style="padding:10px 14px;border-radius:16px;background:rgba(255,255,255,0.08);font-size:12px"><b>MUN Fan:</b> Ball flying everywhere! ⚽</div></div><div style="display:flex;gap:8px;padding:12px;border-top:1px solid rgba(255,255,255,0.08)"><input id="chatInput" placeholder="Type - triggers motion" style="flex:1;padding:11px 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#fff;outline:none"><button style="padding:11px 18px;border-radius:999px;border:none;background:linear-gradient(90deg,#38bdf8,#fb923c);color:#fff;font-weight:800;cursor:pointer" onclick="sendChat()">Send</button></div></div>
+<div class="card cricket"><div style="font-size:11px;font-weight:800;color:#7dd3fc">🔥 Fan Wall • Motion Memes</div><div style="height:80px;background:linear-gradient(135deg,#38bdf8,#fb923c);border-radius:12px;margin-top:10px;display:grid;place-items:center;font-weight:800;animation:hueRotate 3s infinite linear">Rohit 84* 😂 • Live Motion</div></div>
+</div>
 </div>
 
-<div class="card"><h3>📤 Share + SEO</h3><button style="width:100%;padding:10px;border-radius:12px;border:none;background:var(--text);color:var(--card);font-weight:800;cursor:pointer" onclick="sharePage()">Share + Invite - Earn 50 Coins</button><div style="font-size:10px;color:var(--muted);margin-top:8px">PWA ready • No login • Light/Dark • Faster than Cricbuzz app</div></div>
-</div>
-</div>
+<div class="ticker"><div class="tickerTrack"><span>● FULL LIVE MOTION • 🏏 IND 187/4 (18.2) • ⚽ MUN 2-1 CHE (72:15) • 🎆 Ball Flying • ✨ Particles • 🌟 Neon Glow • 🔊 Waveform • 12,847 WATCHING NOW • Blue = Cricket Motion • Orange = Football Motion • </span><span>● FULL LIVE MOTION • 🏏 IND 187/4 (18.2) • ⚽ MUN 2-1 CHE (72:15) • 🎆 Ball Flying • ✨ Particles • 🌟 Neon Glow • 🔊 Waveform • 12,847 WATCHING NOW • Blue = Cricket Motion • Orange = Football Motion • </span></div></div>
 
 <script>
-const cGames=[{name:'MI 187/4 (18.3) vs CSK', over:'Rohit 84* (52) • Need 38 from 9', balls:['1','4','6','W','1','6']},{name:'RCB 156/3 vs GT', over:'Kohli 67*', balls:['1','2','4','1','6','1']},{name:'KKR 201/5 vs SRH', over:'Russell 71* • Finished', balls:['6','6','W','4','1','2']}];
-const fGames=[{name:'MUN 2 - 1 ARS • 78:32', over:'Rashford 63\' • Saka 21\''}];
-let cIdx=0, votes={MI:62,CSK:38,MUN:58,ARS:42}, team=[], coins=parseInt(localStorage.getItem('coins')||'340'), board=[{n:'You',p:coins},{n:'RohitFan',p:520},{n:'CSK_Lover',p:480},{n:'Meme King',p:410}];
+let coins=parseInt(localStorage.getItem('coins19')||'340'), team=[];
+const canvas=document.getElementById('canvas'), ctx=canvas.getContext('2d');
+function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; }
+resize(); window.addEventListener('resize', resize);
+const parts=[];
+for(let i=0;i<120;i++) parts.push({x:Math.random()*innerWidth, y:Math.random()*innerHeight, vx:(Math.random()-0.5)*0.8, vy:(Math.random()-0.5)*0.8, r:Math.random()*2+1, c:Math.random()>0.5?'#38bdf8':'#fb923c', a:Math.random()*0.5+0.3});
+function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>canvas.width) p.vx*=-1; if(p.y<0||p.y>canvas.height) p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=p.c; ctx.globalAlpha=p.a; ctx.shadowBlur=12; ctx.shadowColor=p.c; ctx.fill(); ctx.shadowBlur=0; }); requestAnimationFrame(draw); }
+draw();
 
-function renderC(){ const g=cGames[cIdx]; document.getElementById('cBox').innerHTML=`<div style="font-size:12px;font-weight:700;margin-bottom:8px">${g.name}</div><div class="score">${g.name.split(' ')[0]} ${g.name.split(' ')[1]} <small>vs</small> ${g.name.split(' ')[3]||'CSK'}</div><div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">${g.over}</div><div class="balls">${g.balls.map(b=>`<div class="ball ${b==='6'?'six':b==='W'?'w':''}">${b}</div>`).join('')}</div>`; 
-document.getElementById('timeline').innerHTML=`<div><b>18.3</b> Rohit smashes 6 over long-on! 187/4</div><div><b>18.2</b> WICKET! Jadeja bowls Bumrah</div><div><b>18.1</b> 4 - Full toss, Rohit drives!</div><div><b>18.0</b> 1 - Single to keep strike</div><div><b>17.5</b> 6 - SIX! Rohit 84*</div><div><b>Live</b> Commentary timeline - Faster than Cricbuzz</div>`;}
-function renderF(){ const g=fGames[0]; document.getElementById('fBox').innerHTML=`<div class="score">${g.name}</div><div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">${g.over}</div>`; }
-function pickC(i){ cIdx=i; document.querySelectorAll('.bento .tab').forEach((t,j)=>{ if(j<3) t.classList.toggle('active',j===i)}); renderC(); }
-function vote(t){ if(t==='MI'){votes.MI+=2;votes.CSK-=2;}else{votes.CSK+=2;votes.MI-=2;} document.getElementById('vMI').textContent=votes.MI+'%'; document.getElementById('vCSK').textContent=votes.CSK+'%'; addCoins(5); }
-function voteF(t){ if(t==='MUN'){votes.MUN+=2;votes.ARS-=2;}else{votes.ARS+=2;votes.MUN-=2;} document.getElementById('vMUN').textContent=votes.MUN+'%'; document.getElementById('vARS').textContent=votes.ARS+'%'; addCoins(5); }
-function renderTeam(){ const players=['Rohit','Kohli','Bumrah','Rashford','Saka','Palmer','Russell','Gill']; document.getElementById('teamGrid').innerHTML=players.map(p=>`<div class="slot ${team.includes(p)?'on':''}" onclick="toggleP('${p}')">${p}</div>`).join(''); }
-function toggleP(p){ if(team.includes(p)) team=team.filter(x=>x!==p); else if(team.length<6) team.push(p); renderTeam(); }
-function saveTeam(){ if(team.length<3){ alert('Pick at least 3 - Dream11 style'); return; } addCoins(100); alert('Team saved: '+team.join(', ')+' +100 coins!'); }
-function renderLeader(){ board[0].p=coins; board.sort((a,b)=>b.p-a.p); document.getElementById('leader').innerHTML=board.map((u,i)=>`<div class="leader"><span>${i+1}. ${u.n}</span><b>${u.p} pts</b></div>`).join(''); document.getElementById('coins').textContent=coins; }
-function addCoins(n){ coins+=n; localStorage.setItem('coins',coins); renderLeader(); }
-function postMeme(){ const inp=document.getElementById('memeInput'); if(!inp.value.trim()){ alert('Write meme caption'); return; } addCoins(50); alert('Meme posted: '+inp.value+' +50 coins! Viral feature!'); inp.value=''; }
-function play(ball){ const outs=['6 - SIX! 🎉','W - OUT! 🔥','4 - FOUR!','0 - Dot','1 - Single']; const r=outs[Math.floor(Math.random()*outs.length)]; document.getElementById('overRes').textContent=ball+' → '+r+' +10 coins'; addCoins(10); }
-function redeem(){ if(coins<200){ alert('Need 200 coins - Chat, polls, team builder to earn!'); return; } coins-=200; localStorage.setItem('coins',coins); renderLeader(); alert('Redeemed! 🎁 You got premium badge!'); }
-function sendChat(){ const inp=document.getElementById('chatInput'); const txt=inp.value.trim(); if(!txt) return; const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.className='m me'; d.innerHTML='<b>You:</b> '+txt; b.appendChild(d); inp.value=''; b.scrollTop=b.scrollHeight; localStorage.setItem('chatV15',b.innerHTML); addCoins(10); }
-function sharePage(){ navigator.clipboard.writeText(location.href); addCoins(50); alert('Link copied! +50 coins - Share on WhatsApp for viral + SEO'); }
+function triggerSix(){ const b=document.getElementById('flyBall'); b.src='https://upload.wikimedia.org/wikipedia/commons/7/7d/Cricket_ball.png'; b.style.display='block'; b.style.left='-100px'; b.style.top='30%'; b.animate([{left:'-100px', top:'30%', transform:'rotate(0deg) scale(0.8)'},{left:'50%', top:'10%', transform:'rotate(720deg) scale(2)'},{left:'120%', top:'40%', transform:'rotate(1080deg) scale(0.5)'}], {duration:1200, easing:'ease-out'}).onfinish=()=>{ b.style.display='none'; for(let i=0;i<15;i++) setTimeout(()=>react(['🔥','6️⃣','💙','✨','💥'][Math.floor(Math.random()*5)]), i*60); document.body.animate([{filter:'brightness(1)'},{filter:'brightness(1.5)'},{filter:'brightness(1)'}], {duration:300}); }; }
+function triggerGoal(){ const b=document.getElementById('flyBall'); b.src='https://upload.wikimedia.org/wikipedia/commons/a/a3/Soccer_ball.svg'; b.style.display='block'; b.style.left='-100px'; b.style.top='50%'; b.animate([{left:'-100px', transform:'rotate(0deg) scale(0.8)'},{left:'50%', transform:'rotate(720deg) scale(2)'},{left:'120%', transform:'rotate(1080deg) scale(0.5)'}], {duration:1100}).onfinish=()=>{ b.style.display='none'; for(let i=0;i<20;i++) setTimeout(()=>react(['⚽','🔥','🎉','🥅'][Math.floor(Math.random()*4)]), i*50); document.body.animate([{filter:'brightness(1)'},{filter:'brightness(1.6)'},{filter:'brightness(1)'}], {duration:400}); }; }
+function react(e){ const d=document.createElement('div'); d.className='reaction'; d.textContent=e; d.style.left=Math.random()*80+10+'%'; d.style.bottom='80px'; document.body.appendChild(d); setTimeout(()=>d.remove(),2000); }
+function renderTeam(){ const p=['Rohit','Kohli','Bumrah','Rashford','Saka','Palmer','Russell','Gill']; document.getElementById('teamGrid').innerHTML=p.map(x=>`<div style="aspect-ratio:1;background:${team.includes(x)?'#fff':'rgba(255,255,255,0.06)'};color:${team.includes(x)?'#0f172a':'#94a3b8'};border:1px solid rgba(255,255,255,0.1);border-radius:10px;display:grid;place-items:center;font-size:10px;font-weight:800;cursor:pointer;transition:0.2s;animation:cardFloat ${2+Math.random()*2}s infinite alternate" onclick="toggleP('${x}')">${x}</div>`).join(''); }
+function toggleP(x){ if(team.includes(x)) team=team.filter(t=>t!==x); else if(team.length<6) team.push(x); renderTeam(); react('⭐'); triggerSix(); }
+function saveTeam(){ if(team.length<3){ alert('Pick 3'); return; } coins+=100; localStorage.setItem('coins19',coins); document.getElementById('coins').textContent=coins; triggerSix(); alert('Team saved +100 + motion!'); }
+function sendChat(){ const inp=document.getElementById('chatInput'); const txt=inp.value.trim(); if(!txt) return; const b=document.getElementById('chatBody'); const d=document.createElement('div'); d.style.cssText='padding:10px 14px;border-radius:16px;background:#fff;color:#0f172a;max-width:85%;align-self:flex-end;font-size:12px'; d.innerHTML='<b>You:</b> '+txt; b.appendChild(d); inp.value=''; b.scrollTop=b.scrollHeight; coins+=10; localStorage.setItem('coins19',coins); document.getElementById('coins').textContent=coins; react('💬'); if(Math.random()>0.5) triggerSix(); else triggerGoal(); }
 
 window.onload=function(){
-  renderC(); renderF(); renderTeam(); renderLeader();
+  document.getElementById('cWave').innerHTML=Array.from({length:24}).map((_,i)=>`<i style="animation-delay:${i*0.07}s;height:${8+Math.random()*20}px"></i>`).join('');
+  document.getElementById('fWave').innerHTML=Array.from({length:24}).map((_,i)=>`<i style="animation-delay:${i*0.07}s;height:${8+Math.random()*20}px"></i>`).join('');
+  renderTeam();
+  document.getElementById('teamGrid').innerHTML+='';
+  document.getElementById('leader').innerHTML=`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.08);font-size:12px"><span>1. You</span><b>${coins} pts</b></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.08);font-size:12px"><span>2. RohitFan</span><b>520 pts</b></div><div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12px"><span>3. MUN Fan</span><b>480 pts</b></div>`;
   document.getElementById('chatInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); sendChat(); } });
-  try{ const s=localStorage.getItem('chatV15'); if(s) document.getElementById('chatBody').innerHTML=s; }catch(e){}
-  setInterval(()=>{ document.getElementById('online').textContent=Math.floor(300+Math.random()*80)+' online • No bot'; document.getElementById('cWatch').textContent=Math.floor(1100+Math.random()*200); },3000);
+  setInterval(()=>{ document.getElementById('online').textContent=Math.floor(300+Math.random()*80)+' online • Motion ON'; if(Math.random()>0.75) Math.random()>0.5?triggerSix():triggerGoal(); },3000);
 }
 </script>
 </body>
