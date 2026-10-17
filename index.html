@@ -19,7 +19,6 @@ body{background:var(--bg);color:#ececf0;overflow-x:hidden}
 .auth-area{display:flex;gap:8px;align-items:center}
 .btn{padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;border:none;cursor:pointer}
 .btn-login{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.1)}
-.btn-premium{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff}
 .main{display:flex}
 .sidebar{width:240px;background:rgba(10,10,14,0.6);border-right:1px solid rgba(255,255,255,0.06);min-height:calc(100vh - 70px);padding:12px 8px;position:sticky;top:70px}
 .s-title{font-size:9px;color:#6b7280;font-weight:800;text-transform:uppercase;margin:14px 0 6px 10px}
@@ -66,7 +65,6 @@ body{background:var(--bg);color:#ececf0;overflow-x:hidden}
   <div class="auth-area">
     <span id="userNameDisplay" style="font-size:11px;color:#9ca3af"></span>
     <button class="btn btn-login" id="loginBtn" onclick="openLogin()">Login</button>
-    <button class="btn btn-premium">₹999 Premium</button>
   </div>
 </div>
 <div class="main">
@@ -126,7 +124,7 @@ body{background:var(--bg);color:#ececf0;overflow-x:hidden}
       <div class="dashboard-grid">
         <div class="d-card"><div class="d-value" id="dMatches">3</div><div class="d-label">Live Matches Viewed</div></div>
         <div class="d-card"><div class="d-value" id="dFav">MI</div><div class="d-label">Fav Team</div></div>
-        <div class="d-card"><div class="d-value">₹999</div><div class="d-label">Premium Value</div></div>
+        <div class="d-card"><div class="d-value">Live</div><div class="d-label">Status</div></div>
         <div class="d-card"><div class="d-value" id="dTime">0h</div><div class="d-label">Watch Time</div></div>
       </div>
       <div class="section"><h3>📈 My Dashboard - Requires Login</h3><p id="dashboardMsg" style="font-size:12px;color:#9ca3af;margin-top:8px">Please login to see your personalized dashboard, fav teams, watch history, premium features.</p><div id="dashboardContent"></div></div>
@@ -139,7 +137,7 @@ body{background:var(--bg);color:#ececf0;overflow-x:hidden}
         <div class="setting-row"><div><b style="font-size:13px">Dark Mode - HD 3D Premium</b><div style="font-size:10px;color:#9ca3af">Always dark for premium look</div></div><div class="switch on" onclick="toggle(this)"></div></div>
         <div class="setting-row"><div><b style="font-size:13px">Favorite Team - IPL</b><div style="font-size:10px;color:#9ca3af">Set your fav team for personalized feed</div></div><select class="input" style="width:120px;margin:0" id="favTeamSelect" onchange="saveFavTeam()"><option>MI</option><option>CSK</option><option>RCB</option><option>KKR</option><option>GT</option><option>RR</option></select></div>
         <div class="setting-row"><div><b style="font-size:13px">Language</b><div style="font-size:10px;color:#9ca3af">Choose language for commentary</div></div><select class="input" style="width:120px;margin:0"><option>English</option><option>Hindi</option></select></div>
-        <div style="margin-top:16px"><button class="btn btn-premium" onclick="saveSettings()">💾 Save Settings</button> <span id="saveMsg" style="font-size:11px;color:#6ee7b7;margin-left:8px"></span></div>
+        <div style="margin-top:16px"><button class="btn btn-login" style="background:#22d3ee;color:#000;font-weight:800" onclick="saveSettings()">💾 Save Settings</button> <span id="saveMsg" style="font-size:11px;color:#6ee7b7;margin-left:8px"></span></div>
       </div>
     </div>
   </div>
@@ -152,7 +150,7 @@ body{background:var(--bg);color:#ececf0;overflow-x:hidden}
     <p style="font-size:11px;color:#9ca3af;margin-bottom:12px">Login to see dashboard, fav team, settings update - No bug</p>
     <input class="input" id="loginEmail" placeholder="Email - test@orbittroniz.com">
     <input class="input" id="loginName" placeholder="Name - Your Name">
-    <button class="btn btn-premium" style="width:100%;margin-top:8px" onclick="doLogin()">Login - Access Dashboard</button>
+    <button class="btn" style="width:100%;margin-top:8px;background:#22d3ee;color:#000;font-weight:800" onclick="doLogin()">Login - Access Dashboard</button>
     <button class="btn btn-login" style="width:100%;margin-top:8px" onclick="closeLogin()">Cancel</button>
     <p style="font-size:9px;color:#6b7280;margin-top:10px;text-align:center">No password needed - Local demo auth - Secure - Data saved in browser</p>
   </div>
@@ -170,7 +168,7 @@ function updateAuthUI(){
     document.getElementById('profileItem').textContent='👤 '+currentUser.name;
     document.getElementById('logoutItem').style.display='flex';
     document.getElementById('dashboardMsg').textContent='Welcome '+currentUser.name+'! Your personalized dashboard:';
-    document.getElementById('dashboardContent').innerHTML='<div style="margin-top:10px"><div style="font-size:12px">Email: '+currentUser.email+'</div><div style="font-size:12px;margin-top:6px">Fav Team: <b id="dashFavTeam">'+(localStorage.getItem('favTeam')||'MI')+'</b></div><div style="font-size:11px;color:#9ca3af;margin-top:10px">You have watched 12 live matches this week. Premium active - No ads - Real API unlimited.</div></div>';
+    document.getElementById('dashboardContent').innerHTML='<div style="margin-top:10px"><div style="font-size:12px">Email: '+currentUser.email+'</div><div style="font-size:12px;margin-top:6px">Fav Team: <b id="dashFavTeam">'+(localStorage.getItem('favTeam')||'MI')+'</b></div><div style="font-size:11px;color:#9ca3af;margin-top:10px">You have watched 12 live matches this week. Real API unlimited - No ads.</div></div>';
   }
 }
 updateAuthUI();
@@ -240,4 +238,4 @@ fetchCricket(); fetchFootball();
 setInterval(()=>{fetchCricket(); fetchFootball();},15000);
 </script>
 </body>
-          </html>
+</html>
